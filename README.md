@@ -1,2 +1,2 @@
-# SubmarinesG4-SWE
-Repository for Team Submarines' SWE project - Università degli Studi di Padova
+# Submarines-SWE
+Repository for documentation of Team Submarines' SWE project - Università degli Studi di Padova
