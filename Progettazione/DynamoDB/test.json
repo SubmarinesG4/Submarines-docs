@@ -1,0 +1,278 @@
+{
+  "ModelName": "test",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "Apr 08, 2023, 10:25 AM",
+    "DateLastModified": "Apr 11, 2023, 06:16 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "AccessPattern",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "TRAD#<TenantId>",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "TRAD#<TenantId>#<KeyTraduzione>",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "LinguaTraduzioneDefault",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "LingueTraduzione",
+          "AttributeType": "L"
+        },
+        {
+          "AttributeName": "ModificatodaUtente",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DataCreazione",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Pubblicato",
+          "AttributeType": "BOOL"
+        },
+        {
+          "AttributeName": "VersioneTraduzioni",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "NomeTenant",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "NumeroTraduzioniDisponibiliTenant",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "NumeroTraduzioniUsateTenant",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "Token",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ListaUserTenant",
+          "AttributeType": "L"
+        },
+        {
+          "AttributeName": "EmailUtente",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DataCreazioneUtente",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Username",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DataModifica",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI1Utente",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "TRAD#<TenantId>",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "Username",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "GSI2dataCreazione",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "TRAD#<TenantId>#<KeyTraduzione>",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "DataCreazione",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant1"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "TRAD#tenant1#traduzione1"
+          },
+          "LinguaTraduzioneDefault": {
+            "S": "italiano"
+          },
+          "ModificatodaUtente": {
+            "S": "utente1"
+          },
+          "DataCreazione": {
+            "S": "2023-04-11"
+          },
+          "Pubblicato": {
+            "BOOL": false
+          },
+          "VersioneTraduzioni": {
+            "M": [
+              {
+                "date": "2023-04-05",
+                "user": "utente1",
+                "italiano": "ciaoo",
+                "inglese": "hi"
+              },
+              {
+                "date": "2023-04-05",
+                "user": "admin",
+                "italiano": "ciao",
+                "inglese": "hello"
+              }
+            ]
+          },
+          "DataModifica": {
+            "S": "2023-04-11"
+          }
+        },
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant1"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "TENANT#tenant1"
+          },
+          "LinguaTraduzioneDefault": {
+            "S": "italiano"
+          },
+          "LingueTraduzione": {
+            "L": [
+              "italiano",
+              "inglese"
+            ]
+          }
+        },
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant1"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "USER#user1"
+          },
+          "EmailUtente": {
+            "S": "utente1@gmail.com"
+          },
+          "DataCreazioneUtente": {
+            "S": "2023-04-11"
+          },
+          "Username": {
+            "S": "utente1"
+          }
+        },
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant1"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "USER#user2"
+          },
+          "EmailUtente": {
+            "S": "admin@gmail.com"
+          },
+          "DataCreazioneUtente": {
+            "S": "2023-04-10"
+          },
+          "Username": {
+            "S": "admin"
+          }
+        },
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant2"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "TENANT#tenant2"
+          },
+          "LinguaTraduzioneDefault": {
+            "S": "inglese"
+          },
+          "LingueTraduzione": {
+            "L": [
+              "italiano",
+              "inglese"
+            ]
+          }
+        },
+        {
+          "TRAD#<TenantId>": {
+            "S": "TRAD#tenant2"
+          },
+          "TRAD#<TenantId>#<KeyTraduzione>": {
+            "S": "USER#user1"
+          },
+          "EmailUtente": {
+            "S": "utente1@gmail.com"
+          },
+          "DataCreazioneUtente": {
+            "S": "2023-04-12"
+          },
+          "Username": {
+            "S": "utente1"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}
