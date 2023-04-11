@@ -31,3 +31,6 @@ A
 
 ## import file NoSQL
 il file del db si importa con NoSQLWorkbench
+
+## info su DynamoDB
+[video utile](https://youtu.be/0uLF1tjI_BI)
