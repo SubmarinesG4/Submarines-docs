@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "",
     "DateCreated": "Apr 08, 2023, 10:25 AM",
-    "DateLastModified": "Apr 11, 2023, 06:16 PM",
+    "DateLastModified": "Apr 15, 2023, 11:23 AM",
     "Description": "",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
@@ -81,6 +81,10 @@
         {
           "AttributeName": "DataModifica",
           "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TraduzioneinLinguaDefault",
+          "AttributeType": "S"
         }
       ],
       "GlobalSecondaryIndexes": [
@@ -125,9 +129,6 @@
           "TRAD#<TenantId>#<KeyTraduzione>": {
             "S": "TRAD#tenant1#traduzione1"
           },
-          "LinguaTraduzioneDefault": {
-            "S": "italiano"
-          },
           "ModificatodaUtente": {
             "S": "utente1"
           },
@@ -140,16 +141,20 @@
           "VersioneTraduzioni": {
             "M": [
               {
-                "date": "2023-04-05",
-                "user": "utente1",
-                "italiano": "ciaoo",
-                "inglese": "hi"
-              },
-              {
-                "date": "2023-04-05",
-                "user": "admin",
-                "italiano": "ciao",
-                "inglese": "hello"
+                "M": {
+                  "date": {
+                    "S": "2023-04-05"
+                  },
+                  "user": {
+                    "S": "utente1"
+                  },
+                  "italiano": {
+                    "S": "ciao"
+                  },
+                  "inglese": {
+                    "S": "hi"
+                  }
+                }
               }
             ]
           },
@@ -169,8 +174,12 @@
           },
           "LingueTraduzione": {
             "L": [
-              "italiano",
-              "inglese"
+              {
+                "S": "italiano"
+              },
+              {
+                "S": "inglese"
+              }
             ]
           }
         },
@@ -220,8 +229,12 @@
           },
           "LingueTraduzione": {
             "L": [
-              "italiano",
-              "inglese"
+              {
+                "S": "italiano"
+              },
+              {
+                "S": "inglese"
+              }
             ]
           }
         },
@@ -246,33 +259,7 @@
       "DataAccess": {
         "MySql": {}
       },
-      "BillingMode": "PROVISIONED",
-      "ProvisionedCapacitySettings": {
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5
-        },
-        "AutoScalingRead": {
-          "ScalableTargetRequest": {
-            "MinCapacity": 1,
-            "MaxCapacity": 10,
-            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
-          },
-          "ScalingPolicyConfiguration": {
-            "TargetValue": 70
-          }
-        },
-        "AutoScalingWrite": {
-          "ScalableTargetRequest": {
-            "MinCapacity": 1,
-            "MaxCapacity": 10,
-            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
-          },
-          "ScalingPolicyConfiguration": {
-            "TargetValue": 70
-          }
-        }
-      }
+      "BillingMode": "PAY_PER_REQUEST"
     }
   ]
 }
