@@ -1,0 +1,236 @@
+openapi: 3.0.0
+info:
+  description: Traduzioni API
+  version: "1.0.0"
+  title: Traduzioni
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    ####################################################################################################
+    # DA FARE I PARAMETRI DELLE CHIAMATE
+########################################################################################################
+tags:
+  - name: superadmin
+    description: operazioni che possono essere eseguite da Zero12
+  - name: admin
+    description: operazioni che possono essere eseguite dagli admin del tenant
+  - name: traduttori
+    description: operazioni che possono essere eseguite dai traduttori
+    
+########################################################################################################
+paths:
+  /login:
+    get:
+      tags:
+        - admin
+        - superadmin
+        - traduttori
+      summary: searches inventory
+      operationId: searchInventory
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses: #######DA FARE
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        '400':
+          description: bad input parameter
+        
+  /{NomeTenant}/getAllTranslation:
+    get:
+        tags:
+          - admin
+          - superadmin
+          - traduttori
+        summary: ottenere la lista delle traduzioni in un determinato tenant
+        operationId: getAllTranslations
+        description: |
+          ottenere la lista delle traduzioni in un determinato tenant
+        parameters:
+          - in: path
+            name: NomeTenant
+            description: ottenere la lista delle traduzioni in un determinato tenant
+            required: true
+            schema:
+              type: string
+        responses:  #######DA FARE
+          '200':
+            description: search results matching criteria
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/InventoryItem'
+          '400':
+            description: bad input parameter
+            
+            
+  /{NomeTenant}/translation/{chiaveTraduzione}:
+    get:
+        tags:
+          - admin
+          - superadmin
+          - traduttori
+        summary: ottenere una traduzione specifica dal tenant
+        operationId: getTranslation
+        description: |
+          ottenere una traduzione specifica dal tenant
+        parameters:
+          - in: path
+            name: NomeTenant
+            description: nome del tenant
+            required: true
+            schema:
+              type: string
+          - in: path
+            name: chiaveTraduzione
+            description: chiave traduzione
+            required: true
+            schema:
+              type: string
+        responses: #######DA FARE
+          '200':
+            description: search results matching criteria
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/InventoryItem'
+          '400':
+            description: bad input parameter
+    put:
+      tags:
+          - admin
+          - superadmin
+          - traduttori
+      summary: aggiungere una traduzione al tenant
+      operationId: addTranslation
+      description: aggiungere una traduzione al tenant
+      parameters:
+          - in: path
+            name: NomeTenant
+            description: nome del tenant
+            required: true
+            schema:
+              type: string
+          - in: path
+            name: chiaveTraduzione
+            description: chiave traduzione
+            required: true
+            schema:
+              type: string
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody: #######DA FARE
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+        description: Inventory item to add
+        
+  /{NomeTenant}/info:
+    get:
+      tags:
+        - admin
+        - superadmin
+      summary: ottenere infomazioni specifiche del tenant
+      operationId: getTenantInfo
+      description: |
+        ottenere infomazioni specifiche del tenant
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      responses: #######DA FARE
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        '400':
+          description: bad input parameter
+      
+   
+          
+################################################################################################
+components:
+  schemas:
+    InventoryItem:
+      type: object
+      required:
+        - id
+        - name
+        - manufacturer
+        - releaseDate
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: Widget Adapter
+        releaseDate:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        manufacturer:
+          $ref: '#/components/schemas/Manufacturer'
+    Manufacturer:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: ACME Corporation
+        homePage:
+          type: string
+          format: url
+          example: 'https://www.acme-corp.com'
+        phone:
+          type: string
+          example: 408-867-5309
+      type: object
