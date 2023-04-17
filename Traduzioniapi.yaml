@@ -62,11 +62,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InventoryItem'
+                  $ref: '#/components/schemas/Traduzione'
         '400':
           description: bad input parameter
         
-  /{NomeTenant}/getAllTranslation:
+  /{NomeTenant}/translation:
     get:
         tags:
           - admin
@@ -85,15 +85,16 @@ paths:
               type: string
         responses:  #######DA FARE
           '200':
-            description: search results matching criteria
+            description: si ottiene una lista di traduzioni in particolare chiavetraduzione traduzionedefault
             content:
               application/json:
                 schema:
                   type: array
                   items:
-                    $ref: '#/components/schemas/InventoryItem'
+                    $ref: '#/components/schemas/Traduzione'
+                  ## meta -> /tenant1/translation?page=2 
           '400':
-            description: bad input parameter
+            description: tenant non esistente
             
             
   /{NomeTenant}/translation/{chiaveTraduzione}:
@@ -127,7 +128,7 @@ paths:
                 schema:
                   type: array
                   items:
-                    $ref: '#/components/schemas/InventoryItem'
+                    $ref: '#/components/schemas/Traduzione'
           '400':
             description: bad input parameter
     put:
@@ -162,12 +163,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InventoryItem'
+              $ref: '#/components/schemas/OggettoTraduzione'# faccio un oggetto con meno campi, solo quelli essenziali: esempio: non modifico la chiavetraduzione
         description: Inventory item to add
         
-  /{NomeTenant}/info:
+  /{NomeTenant}:
     get:
       tags:
+        - traduttori
         - admin
         - superadmin
       summary: ottenere infomazioni specifiche del tenant
@@ -187,50 +189,143 @@ paths:
           content:
             application/json:
               schema:
+                oneOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
                 type: array
                 items:
-                  $ref: '#/components/schemas/InventoryItem'
+                  $ref: '#/components/schemas/Traduzione'
         '400':
           description: bad input parameter
+      
+      put: ##creazione/modifica tenant
+        tags:
+          - superadmin
+        summary: 
+        operationId: 
+        description:
+        parameters:
+          - in: path
+            name: NomeTenant
+            description: nome del tenant
+            required: true
+            schema:
+              type: string
+    delete:
+      tags:
+        - superadmin
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      #responses: #######DA FARE
+      #  '200':
+      #    description: ---
+      #    content:
+      #      application/json:
+      #        schema:
+      #          type: array
+      #          items:
+      #  '400':
+      #    description: bad input parameter
+
+  /{NomeTenant}/invite: ## invito traduttori nel tenant > cognito
+    post:
+      tags:
+        - admin
+        - superadmin
+      summary: ---
+      operationId: ---
+      description: ---
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+        
+  /{NomeTenant}/user: ##crea un utente, chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
+    post:
+      tags: 
+        - superadmin
+      summary: 
+      operationId: 
+      description:
+    delete:
+      tags:
+        - admin
+        - superadmin
+        
+  
+    
+        
+  /Tenants:  ## lista di tutti i tenant visibili al super admin
+    get:
+      tags:
+        - superadmin
       
    
           
 ################################################################################################
 components:
   schemas:
-    InventoryItem:
+    # oggetto traduzione (es: en:hi, it:ciao)
+    OggettoTraduzione:
+      type: object
+      required: 
+        - traduzione
+      properties:
+        traduzione:
+          type: string
+          example:
+            en: Hello
+            it: Ciao
+      
+        lingueTraduzione:
+          type: array
+          items:
+            type: string
+        modificatodaUtente:
+          type: string
+          example: utente1
+        dataCreazione:
+          type: string
+          example: 2023-05-02
+          
+        
+    ## traduzione che viene visualizzata nella schermata generale(lista di traduzioni)
+    Traduzione:
       type: object
       required:
-        - id
-        - name
-        - manufacturer
-        - releaseDate
+        - keyTraduzione
+        - traduzioneDefault
       properties:
-        id:
+        keyTraduzione:
           type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        name:
+          example: trad1
+        linguaTraduzioneDefault:
           type: string
-          example: Widget Adapter
-        releaseDate:
+          example: it  
+        traduzioneDefault:
           type: string
-          format: date-time
-          example: '2016-08-29T09:12:33.001Z'
-        manufacturer:
-          $ref: '#/components/schemas/Manufacturer'
-    Manufacturer:
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: ACME Corporation
-        homePage:
-          type: string
-          format: url
-          example: 'https://www.acme-corp.com'
-        phone:
-          type: string
-          example: 408-867-5309
+          example: ciao
+        additionalProperties:
+          $ref: '#/components/schemas/OggettoTraduzione' ## serve per riutilizzare l'oggetto traduzioni
+          $ref2: '#/components/schemas/VersioniTraduzione'
+      
+       
+         
+        
+    
+    
+    VersioniTraduzione:
       type: object
+      
+    
+    
+    Tenant:
+      type: object
+    
+    
