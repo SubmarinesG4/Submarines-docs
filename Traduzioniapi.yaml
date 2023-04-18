@@ -278,7 +278,9 @@ components:
         - traduzione
       properties:
         traduzione:
-          type: string
+          type: object
+          additionalProperties:
+            type: string
           example:
             en: Hello
             it: Ciao
@@ -308,24 +310,55 @@ components:
         linguaTraduzioneDefault:
           type: string
           example: it  
-        traduzioneDefault:
+        traduzioneinLinguaDefault:
           type: string
           example: ciao
         additionalProperties:
-          $ref: '#/components/schemas/OggettoTraduzione' ## serve per riutilizzare l'oggetto traduzioni
-          $ref2: '#/components/schemas/VersioniTraduzione'
-      
-       
-         
-        
-    
+          anyOf:
+            - $ref: '#/components/schemas/OggettoTraduzione' ## serve per riutilizzare l'oggetto traduzioni
+            - $ref: '#/components/schemas/VersioniTraduzione'
     
     VersioniTraduzione:
       type: object
-      
-    
+      properties:
+        modificatodaUtente:
+          type: string
+          example: utente1
+        dataModifica:
+          type: string
+        traduzioni:
+          type: string
+          example:
+            en: Hello
+            it: Ciao
     
     Tenant:
       type: object
+      properties:
+        nomeTenant:
+          type: string
+          example: tenant1
+        numeroTraduzioniDisponibili:
+          type: integer
+          minimum: 0
+        numeroTraduzioniUsate:
+          type: integer
+          minimum: 0
+        token:
+          type: string
+        listaUserTenant:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    
+    User:
+      type: object
+      properties:
+        emailUtente:
+          type: string
+        username:
+          type: string
+        dataCreazioneUtente:
+          type: string
     
     
