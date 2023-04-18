@@ -1,16 +1,16 @@
+########################
+## APRIRE CON https://editor.swagger.io/
+########################
 openapi: 3.0.0
 info:
   description: Traduzioni API
-  version: "1.0.0"
+  version: "0.0.1"
   title: Traduzioni
   contact:
-    email: you@your-company.com
+    email: submarines.g4@gmail.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-    ####################################################################################################
-    # DA FARE I PARAMETRI DELLE CHIAMATE
-########################################################################################################
 tags:
   - name: superadmin
     description: operazioni che possono essere eseguite da Zero12
@@ -72,18 +72,18 @@ paths:
           - admin
           - superadmin
           - traduttori
-        summary: ottenere la lista delle traduzioni in un determinato tenant
+        summary: ritorna la lista delle traduzioni in un determinato tenant
         operationId: getAllTranslations
         description: |
           ottenere la lista delle traduzioni in un determinato tenant
         parameters:
           - in: path
             name: NomeTenant
-            description: ottenere la lista delle traduzioni in un determinato tenant
+            description: ritorna la lista delle traduzioni in un determinato tenant
             required: true
             schema:
               type: string
-        responses:  #######DA FARE
+        responses:
           '200':
             description: si ottiene una lista di traduzioni in particolare chiavetraduzione traduzionedefault
             content:
@@ -94,7 +94,7 @@ paths:
                     $ref: '#/components/schemas/Traduzione'
                   ## meta -> /tenant1/translation?page=2 
           '400':
-            description: tenant non esistente
+            description: bad input parameter
             
             
   /{NomeTenant}/translation/{chiaveTraduzione}:
@@ -103,10 +103,10 @@ paths:
           - admin
           - superadmin
           - traduttori
-        summary: ottenere una traduzione specifica dal tenant
+        summary: ritorna il dettaglio della traduzione
         operationId: getTranslation
         description: |
-          ottenere una traduzione specifica dal tenant
+          ritorna il dettaglio della traduzione
         parameters:
           - in: path
             name: NomeTenant
@@ -163,7 +163,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OggettoTraduzione'# faccio un oggetto con meno campi, solo quelli essenziali: esempio: non modifico la chiavetraduzione
+              $ref: '#/components/schemas/OggettoTraduzione'# faccio un oggetto con meno campi, solo quelli essenziali
         description: Inventory item to add
         
   /{NomeTenant}:
@@ -175,7 +175,7 @@ paths:
       summary: ottenere infomazioni specifiche del tenant
       operationId: getTenantInfo
       description: |
-        ottenere infomazioni specifiche del tenant
+        ottenere infomazioni generali del tenant, si usa nella schermata delle informazioni riguradanti il tenant
       parameters:
         - in: path
           name: NomeTenant
@@ -189,29 +189,20 @@ paths:
           content:
             application/json:
               schema:
-                oneOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
                 type: array
                 items:
-                  $ref: '#/components/schemas/Traduzione'
+                  oneOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
+                    - $ref: '#/components/schemas/TenantInfoGenerali'
+                    - $ref: '#/components/schemas/TenantInfoSensibili'
         '400':
           description: bad input parameter
       
-      put: ##creazione/modifica tenant
-        tags:
-          - superadmin
-        summary: 
-        operationId: 
-        description:
-        parameters:
-          - in: path
-            name: NomeTenant
-            description: nome del tenant
-            required: true
-            schema:
-              type: string
-    delete:
+    put: ##creazione/modifica tenant
       tags:
         - superadmin
+      summary: creazione e/o modifica di un tenant
+      operationId: createTenant
+      description: creazione e/o modifica di un tenant
       parameters:
         - in: path
           name: NomeTenant
@@ -219,25 +210,41 @@ paths:
           required: true
           schema:
             type: string
-      #responses: #######DA FARE
-      #  '200':
-      #    description: ---
-      #    content:
-      #      application/json:
-      #        schema:
-      #          type: array
-      #          items:
-      #  '400':
-      #    description: bad input parameter
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+        
+    delete:
+      tags:
+        - superadmin
+      summary: cancellazione di un tenant
+      operationId: deleteTenant
+      description: cancellazione di un tenant
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+          '200':
+            description: (OK)item deleted
+          '404':
+            description: object not found
 
   /{NomeTenant}/invite: ## invito traduttori nel tenant > cognito
     post:
       tags:
         - admin
         - superadmin
-      summary: ---
-      operationId: ---
-      description: ---
+      summary: invito traduttori nel tenant
+      operationId: inviteUser
+      description: invito traduttori nel tenant
       parameters:
         - in: path
           name: NomeTenant
@@ -245,19 +252,52 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        '201':
+          description: utente invitato
+        '400':
+          description: bad request
+        ## CODICI ERRORE POST?????
         
-  /{NomeTenant}/user: ##crea un utente, chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
+  /{NomeTenant}/user: ##crea un utente, possibile chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
     post:
       tags: 
         - superadmin
-      summary: 
-      operationId: 
-      description:
+      summary: creazione utente, possibile chiamata in cascata dopo la creazione del tenant 
+      operationId: createUser
+      description: creazione utente, possibile chiamata in cascata dopo la creazione del tenant
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: utente creato
+        '400':
+          description: bad request      
+            
     delete:
       tags:
         - admin
         - superadmin
-        
+      summary: eliminazione utente
+      operationId: deleteUser
+      description: eliminazione utente
+      parameters:
+        - in: path
+          name: NomeTenant
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+          '200':
+            description: (OK)item deleted
+          '404':
+            description: object not found 
   
     
         
@@ -265,6 +305,21 @@ paths:
     get:
       tags:
         - superadmin
+      summary: ottenere lista di tutti i tenant
+      operationId: getAllTenant
+      description: |
+        ottenere lista di tutti i tenant
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantInfoGenerali'
+        '400':
+          description: bad input parameter
       
    
           
@@ -284,7 +339,6 @@ components:
           example:
             en: Hello
             it: Ciao
-      
         lingueTraduzione:
           type: array
           items:
@@ -295,6 +349,9 @@ components:
         dataCreazione:
           type: string
           example: 2023-05-02
+        pubblicato:
+          type: boolean
+          example: true
           
         
     ## traduzione che viene visualizzata nella schermata generale(lista di traduzioni)
@@ -332,7 +389,7 @@ components:
             en: Hello
             it: Ciao
     
-    Tenant:
+    TenantInfoGenerali:
       type: object
       properties:
         nomeTenant:
@@ -344,8 +401,21 @@ components:
         numeroTraduzioniUsate:
           type: integer
           minimum: 0
+        listaLingueDisponibili:
+          type: array
+          items:
+            type: string
+            example: ["it","en"]
+        
+    
+    TenantInfoSensibili:
+      type: object
+      properties:
         token:
           type: string
+        linguaTraduzioneDefault:
+          type: string
+          example: it
         listaUserTenant:
           type: array
           items:
