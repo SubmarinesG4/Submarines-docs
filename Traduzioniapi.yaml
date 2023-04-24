@@ -191,11 +191,13 @@ paths:
               schema:
                 type: array
                 items:
-                  oneOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
+                  anyOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
                     - $ref: '#/components/schemas/TenantInfoGenerali'
                     - $ref: '#/components/schemas/TenantInfoSensibili'
         '400':
           description: bad input parameter
+    
+    
       
     put: ##creazione/modifica tenant
       tags:
@@ -217,6 +219,16 @@ paths:
           description: 'invalid input, object invalid'
         '409':
           description: an existing item already exists
+      requestBody: 
+        content:
+          application/json:
+            schema:
+                items:
+                  allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
+                    - $ref: '#/components/schemas/TenantInfoGenerali'
+                    - $ref: '#/components/schemas/TenantInfoSensibili'
+        description: Inventory item to add
+        ## CHIEDERE SE FARE UNO SCHEMA SOLO PER LA PUT (SENZA INVIARE CAMPI VUOTI)
         
     delete:
       tags:
@@ -257,9 +269,10 @@ paths:
           description: utente invitato
         '400':
           description: bad request
-        ## CODICI ERRORE POST?????
+        
         
   /{NomeTenant}/user: ##crea un utente, possibile chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
+  ## CREAZIONE UTENTE ADMIN?????
     post:
       tags: 
         - superadmin
@@ -332,6 +345,7 @@ components:
       required: 
         - traduzione
       properties:
+      # contiene tutte le lingue del tenant anche quelle che non hanno una traduzione
         traduzione:
           type: object
           additionalProperties:
@@ -339,19 +353,19 @@ components:
           example:
             en: Hello
             it: Ciao
-        lingueTraduzione:
-          type: array
-          items:
-            type: string
+            fr : 
         modificatodaUtente:
           type: string
           example: utente1
         dataCreazione:
           type: string
           example: 2023-05-02
+        dataModifica:
+          type: string
+          example: 2023-06-02
         pubblicato:
           type: boolean
-          example: true
+          example: false
           
         
     ## traduzione che viene visualizzata nella schermata generale(lista di traduzioni)
@@ -401,6 +415,9 @@ components:
         numeroTraduzioniUsate:
           type: integer
           minimum: 0
+        linguaTraduzioneDefault:
+          type: string
+          example: it
         listaLingueDisponibili:
           type: array
           items:
@@ -413,9 +430,6 @@ components:
       properties:
         token:
           type: string
-        linguaTraduzioneDefault:
-          type: string
-          example: it
         listaUserTenant:
           type: array
           items:
