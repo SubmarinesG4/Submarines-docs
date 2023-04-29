@@ -347,13 +347,20 @@ components:
       properties:
       # contiene tutte le lingue del tenant anche quelle che non hanno una traduzione
         traduzione:
-          type: object
-          additionalProperties:
-            type: string
+          type: array
+          items:
+            type: object
+            properties:
+              language:
+                type: string
+                example: it
+              content:
+                type: string
+                example: ciao
           example:
-            en: Hello
-            it: Ciao
-            fr : 
+            - {"language":it, "content":ciao}
+            - {"language":en, "content":hi}
+            - {"language":fr, "content":}
         modificatodaUtente:
           type: string
           example: utente1
