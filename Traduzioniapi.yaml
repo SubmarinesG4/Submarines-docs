@@ -8,9 +8,6 @@ info:
   title: Traduzioni
   contact:
     email: submarines.g4@gmail.com
-  license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
   - name: superadmin
     description: operazioni che possono essere eseguite da Zero12
@@ -22,51 +19,21 @@ tags:
 ########################################################################################################
 paths:
   /login:
-    get:
+    get: #######DA FARE
       tags:
         - admin
         - superadmin
         - traduttori
-      summary: searches inventory
-      operationId: searchInventory
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
-      responses: #######DA FARE
+      summary: login
+      operationId: login
+      description: login
+      responses:
         '200':
-          description: search results matching criteria
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Traduzione'
+          description: login autorizzato
         '400':
-          description: bad input parameter
+          description: login NON autorizzato
         
-  /{NomeTenant}/translation:
+  /{NomeTenant}/translations:
     get:
         tags:
           - admin
@@ -163,8 +130,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OggettoTraduzione'# faccio un oggetto con meno campi, solo quelli essenziali
+              $ref: '#/components/schemas/Traduzione'
+                # faccio un oggetto con meno campi, solo quelli essenziali
         description: Inventory item to add
+    
+    delete:
+      tags:
+        - admin
+        - superadmin
+        - traduttori
+      summary: eliminare una traduzione dal tenant
+      operationId: deleteTranslation
+      description: eliminare una traduzione dal tenant
+      parameters:
+          - in: path
+            name: NomeTenant
+            description: nome del tenant
+            required: true
+            schema:
+              type: string
+          - in: path
+            name: chiaveTraduzione
+            description: chiave traduzione
+            required: true
+            schema:
+              type: string
+      responses:
+        '200':
+          description: (OK)item deleted
+        '404':
+          description: object not found
         
   /{NomeTenant}:
     get:
@@ -226,7 +221,8 @@ paths:
                 items:
                   allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
                     - $ref: '#/components/schemas/TenantInfoGenerali'
-                    - $ref: '#/components/schemas/TenantInfoSensibili'
+                    
+                    
         description: Inventory item to add
         ## CHIEDERE SE FARE UNO SCHEMA SOLO PER LA PUT (SENZA INVIARE CAMPI VUOTI)
         
@@ -339,6 +335,7 @@ paths:
 ################################################################################################
 components:
   schemas:
+    
     # oggetto traduzione (es: en:hi, it:ciao)
     OggettoTraduzione:
       type: object
@@ -346,7 +343,7 @@ components:
         - traduzione
       properties:
       # contiene tutte le lingue del tenant anche quelle che non hanno una traduzione
-        traduzione:
+        translations:
           type: array
           items:
             type: object
@@ -361,16 +358,16 @@ components:
             - {"language":it, "content":ciao}
             - {"language":en, "content":hi}
             - {"language":fr, "content":}
-        modificatodaUtente:
+        modifiedbyUser:
           type: string
           example: utente1
-        dataCreazione:
+        creationDate:
           type: string
           example: 2023-05-02
-        dataModifica:
+        modificationDate:
           type: string
           example: 2023-06-02
-        pubblicato:
+        published:
           type: boolean
           example: false
           
@@ -382,29 +379,30 @@ components:
         - keyTraduzione
         - traduzioneDefault
       properties:
-        keyTraduzione:
+        keyTranslation:
           type: string
           example: trad1
-        linguaTraduzioneDefault:
+        defaultTranslationLanguage:
           type: string
           example: it  
-        traduzioneinLinguaDefault:
+        defaultTranslationinLanguage:
           type: string
           example: ciao
         additionalProperties:
           anyOf:
-            - $ref: '#/components/schemas/OggettoTraduzione' ## serve per riutilizzare l'oggetto traduzioni
+            - $ref: '#/components/schemas/OggettoTraduzione'
             - $ref: '#/components/schemas/VersioniTraduzione'
     
     VersioniTraduzione:
       type: object
       properties:
-        modificatodaUtente:
+        modifiedbyUser:
           type: string
           example: utente1
-        dataModifica:
+        modificationDate:
           type: string
-        traduzioni:
+          example: 2023-06-10
+        translations:
           type: string
           example:
             en: Hello
@@ -413,19 +411,19 @@ components:
     TenantInfoGenerali:
       type: object
       properties:
-        nomeTenant:
+        tenantName:
           type: string
           example: tenant1
-        numeroTraduzioniDisponibili:
+        numberTranslationAvailable:
           type: integer
           minimum: 0
-        numeroTraduzioniUsate:
+        numberTranslationUsed:
           type: integer
           minimum: 0
-        linguaTraduzioneDefault:
+        defaultTranslationLanguage:
           type: string
           example: it
-        listaLingueDisponibili:
+        listAvailableLanguages:
           type: array
           items:
             type: string
@@ -437,7 +435,7 @@ components:
       properties:
         token:
           type: string
-        listaUserTenant:
+        userListTenant:
           type: array
           items:
             $ref: '#/components/schemas/User'
@@ -445,11 +443,11 @@ components:
     User:
       type: object
       properties:
-        emailUtente:
+        UserEmail:
           type: string
         username:
           type: string
-        dataCreazioneUtente:
+        creationDate:
           type: string
     
     
