@@ -33,7 +33,7 @@ paths:
         '400':
           description: login NON autorizzato
         
-  /{NomeTenant}/translations:
+  /{tenantId}/translations:
     get:
         tags:
           - admin
@@ -45,7 +45,7 @@ paths:
           ottenere la lista delle traduzioni in un determinato tenant
         parameters:
           - in: path
-            name: NomeTenant
+            name: tenantId
             description: ritorna la lista delle traduzioni in un determinato tenant
             required: true
             schema:
@@ -64,7 +64,7 @@ paths:
             description: bad input parameter
             
             
-  /{NomeTenant}/translation/{chiaveTraduzione}:
+  /{tenantId}/translation/{TranslationKey}:
     get:
         tags:
           - admin
@@ -76,13 +76,13 @@ paths:
           ritorna il dettaglio della traduzione
         parameters:
           - in: path
-            name: NomeTenant
+            name: tenantId
             description: nome del tenant
             required: true
             schema:
               type: string
           - in: path
-            name: chiaveTraduzione
+            name: TranslationKey
             description: chiave traduzione
             required: true
             schema:
@@ -108,13 +108,13 @@ paths:
       description: aggiungere una traduzione al tenant
       parameters:
           - in: path
-            name: NomeTenant
+            name: tenantId
             description: nome del tenant
             required: true
             schema:
               type: string
           - in: path
-            name: chiaveTraduzione
+            name: TranslationKey
             description: chiave traduzione
             required: true
             schema:
@@ -144,13 +144,13 @@ paths:
       description: eliminare una traduzione dal tenant
       parameters:
           - in: path
-            name: NomeTenant
+            name: tenantId
             description: nome del tenant
             required: true
             schema:
               type: string
           - in: path
-            name: chiaveTraduzione
+            name: TranslationKey
             description: chiave traduzione
             required: true
             schema:
@@ -161,7 +161,7 @@ paths:
         '404':
           description: object not found
         
-  /{NomeTenant}:
+  /{tenantId}: ##DEFINITIVO
     get:
       tags:
         - traduttori
@@ -173,7 +173,7 @@ paths:
         ottenere infomazioni generali del tenant, si usa nella schermata delle informazioni riguradanti il tenant
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
@@ -202,18 +202,30 @@ paths:
       description: creazione e/o modifica di un tenant
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
             type: string
       responses:
         '201':
-          description: item created
+          description: Item created
+          content:
+            application/json:
+              schema:
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/TenantInfoGenerali'
+        '204':
+          description: Item modified
+          content:
+            application/json:
+              schema:
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/TenantInfoGenerali'
         '400':
-          description: 'invalid input, object invalid'
-        '409':
-          description: an existing item already exists
+          description: 'Bad Request: invalid input, object invalid'
       requestBody: 
         content:
           application/json:
@@ -234,18 +246,18 @@ paths:
       description: cancellazione di un tenant
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
             type: string
       responses:
           '200':
-            description: (OK)item deleted
+            description: item deleted
           '404':
             description: object not found
 
-  /{NomeTenant}/invite: ## invito traduttori nel tenant > cognito
+  /{tenantId}/invite: ## invito traduttori nel tenant > cognito
     post:
       tags:
         - admin
@@ -255,7 +267,7 @@ paths:
       description: invito traduttori nel tenant
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
@@ -267,7 +279,7 @@ paths:
           description: bad request
         
         
-  /{NomeTenant}/user: ##crea un utente, possibile chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
+  /{tenantId}/user: ##crea un utente, possibile chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
   ## CREAZIONE UTENTE ADMIN?????
     post:
       tags: 
@@ -277,7 +289,7 @@ paths:
       description: creazione utente, possibile chiamata in cascata dopo la creazione del tenant
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
@@ -297,7 +309,7 @@ paths:
       description: eliminazione utente
       parameters:
         - in: path
-          name: NomeTenant
+          name: tenantId
           description: nome del tenant
           required: true
           schema:
@@ -310,7 +322,7 @@ paths:
   
     
         
-  /Tenants:  ## lista di tutti i tenant visibili al super admin
+  /tenants:  ## lista di tutti i tenant visibili al super admin
     get:
       tags:
         - superadmin
@@ -324,9 +336,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TenantInfoGenerali'
+                type: object
+                properties:
+                  tenants:
+                    $ref: '#/components/schemas/TenantInfoGenerali'
         '400':
           description: bad input parameter
       
@@ -379,7 +392,7 @@ components:
         - keyTraduzione
         - traduzioneDefault
       properties:
-        keyTranslation:
+        translationKey:
           type: string
           example: trad1
         defaultTranslationLanguage:
@@ -435,7 +448,7 @@ components:
       properties:
         token:
           type: string
-        userListTenant:
+        userList:
           type: array
           items:
             $ref: '#/components/schemas/User'
