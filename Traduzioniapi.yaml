@@ -191,6 +191,8 @@ paths:
                     - $ref: '#/components/schemas/TenantInfoSensibili'
         '400':
           description: bad input parameter
+        '404':
+          description: object not found
     
     
       
@@ -456,7 +458,7 @@ components:
     User:
       type: object
       properties:
-        UserEmail:
+        userEmail:
           type: string
         username:
           type: string
