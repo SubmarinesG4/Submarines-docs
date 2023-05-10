@@ -218,7 +218,9 @@ paths:
                 items:
                   allOf:
                     - $ref: '#/components/schemas/TenantInfoGenerali'
-        '204':
+                    - $ref: '#/components/schemas/TenantInfoSensibili'
+                    
+        '200':
           description: Item modified
           content:
             application/json:
