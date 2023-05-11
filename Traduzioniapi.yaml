@@ -59,7 +59,6 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Traduzione'
-                  ## meta -> /tenant1/translation?page=2 
           '400':
             description: bad input parameter
             
@@ -93,9 +92,11 @@ paths:
             content:
               application/json:
                 schema:
-                  type: array
                   items:
-                    $ref: '#/components/schemas/Traduzione'
+                    allOf:
+                      - $ref: '#/components/schemas/Traduzione'
+                      - $ref: '#/components/schemas/OggettoTraduzione'
+                      - $ref: '#/components/schemas/VersioniTraduzione'
           '400':
             description: bad input parameter
     put:
@@ -130,8 +131,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Traduzione'
-                # faccio un oggetto con meno campi, solo quelli essenziali
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Traduzione'
+                  - $ref: '#/components/schemas/OggettoTraduzione'
+            
         description: Inventory item to add
     
     delete:
@@ -405,10 +409,10 @@ components:
         defaultTranslationinLanguage:
           type: string
           example: ciao
-        additionalProperties:
-          anyOf:
-            - $ref: '#/components/schemas/OggettoTraduzione'
-            - $ref: '#/components/schemas/VersioniTraduzione'
+       # additionalProperties:
+      #    anyOf:
+      #      - $ref: '#/components/schemas/OggettoTraduzione'
+      #      - $ref: '#/components/schemas/VersioniTraduzione'
     
     VersioniTraduzione:
       type: object
@@ -419,11 +423,20 @@ components:
         modificationDate:
           type: string
           example: 2023-06-10
-        translations:
-          type: string
+        versionedTranslations:
+          type: array
+          items:
+            type: object
+            properties:
+              language:
+                type: string
+                example: it
+              content:
+                type: string
+                example: ciao
           example:
-            en: Hello
-            it: Ciao
+            - {"language":it, "content":ciaoo}
+            - {"language":en, "content":hello}
     
     TenantInfoGenerali:
       type: object
