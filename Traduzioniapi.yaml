@@ -409,12 +409,16 @@ components:
         defaultTranslationinLanguage:
           type: string
           example: ciao
-       # additionalProperties:
-      #    anyOf:
-      #      - $ref: '#/components/schemas/OggettoTraduzione'
-      #      - $ref: '#/components/schemas/VersioniTraduzione'
-    
+
     VersioniTraduzione:
+      type: object
+      properties:
+        versionedTranslations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Version'
+
+    Version:
       type: object
       properties:
         modifiedbyUser:
@@ -423,7 +427,7 @@ components:
         modificationDate:
           type: string
           example: 2023-06-10
-        versionedTranslations:
+        translations:
           type: array
           items:
             type: object
