@@ -63,6 +63,7 @@ paths:
             description: bad input parameter
             
             
+            
   /{tenantId}/translation/{TranslationKey}:
     get:
         tags:
@@ -99,6 +100,8 @@ paths:
                       - $ref: '#/components/schemas/VersioniTraduzione'
           '400':
             description: bad input parameter
+          '404':
+            description: object not found
     put:
       tags:
           - admin
@@ -125,13 +128,12 @@ paths:
           description: item created
         '400':
           description: 'invalid input, object invalid'
-        '409':
-          description: an existing item already exists
       requestBody: #######DA FARE
         content:
           application/json:
             schema:
               items:
+                type: object
                 allOf:
                   - $ref: '#/components/schemas/Traduzione'
                   - $ref: '#/components/schemas/OggettoTraduzione'
@@ -347,9 +349,13 @@ paths:
                 type: object
                 properties:
                   tenants:
-                    $ref: '#/components/schemas/TenantInfoGenerali'
-        '400':
-          description: bad input parameter
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/TenantInfoGenerali'
+        '404':
+          description: Tenat non trovati
       
    
           
@@ -451,9 +457,6 @@ components:
         numberTranslationAvailable:
           type: integer
           minimum: 0
-        numberTranslationUsed:
-          type: integer
-          minimum: 0
         defaultTranslationLanguage:
           type: string
           example: it
@@ -461,7 +464,7 @@ components:
           type: array
           items:
             type: string
-            example: ["it","en"]
+          example: ["it","en"]
         
     
     TenantInfoSensibili:
