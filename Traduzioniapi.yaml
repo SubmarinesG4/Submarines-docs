@@ -66,6 +66,8 @@ paths:
             description: bad input parameter
           '404':
             description: not found
+          '500':
+            description: internal server error
             
             
             
@@ -139,6 +141,8 @@ paths:
             description: bad input parameter
           '404':
             description: not found
+          '500':
+            description: internal server error
 
     put:
       tags:
@@ -212,6 +216,8 @@ paths:
                             $ref: '#/components/schemas/Version'
         '400':
           description: 'invalid input, object invalid'
+        '500':
+          description: internal server error
       requestBody: #######DA FARE
         content:
           application/json:
@@ -266,6 +272,8 @@ paths:
           description: OK
         '404':
           description: not found
+        '500':
+          description: internal server error
         
   /{tenantId}: ##DEFINITIVO
     get:
@@ -319,6 +327,8 @@ paths:
           description: bad input parameter
         '404':
           description: object not found
+        '500':
+          description: internal server error
     
     
       
@@ -398,6 +408,8 @@ paths:
                       $ref: '#/components/schemas/User'
         '400':
           description: 'Bad Request: invalid input, object invalid'
+        '500':
+          description: internal server error
       requestBody: 
         content:
           application/json:
@@ -425,6 +437,8 @@ paths:
             description: OK
           '404':
             description: not found
+          '500':
+            description: internal server error
 
   /{tenantId}/invite: ## invito traduttori nel tenant > cognito
     post:
@@ -464,6 +478,8 @@ paths:
                   - $ref: '#/components/schemas/User'
         '400':
           description: bad request  
+        '500':
+          description: internal server error
 
   /tenants:  ## lista di tutti i tenant visibili al super admin
     get:
@@ -500,9 +516,9 @@ paths:
                           example: it
         '404':
           description: not found
-      
-   
-          
+        '500':
+          description: internal server error
+
 ################################################################################################
 components:
   schemas:
