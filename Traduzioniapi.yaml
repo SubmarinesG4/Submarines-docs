@@ -56,11 +56,16 @@ paths:
             content:
               application/json:
                 schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Traduzione'
+                  type: object
+                  properties:
+                    translations:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Traduzione'
           '400':
             description: bad input parameter
+          '404':
+            description: not found
             
             
             
@@ -93,15 +98,48 @@ paths:
             content:
               application/json:
                 schema:
-                  items:
-                    allOf:
-                      - $ref: '#/components/schemas/Traduzione'
-                      - $ref: '#/components/schemas/OggettoTraduzione'
-                      - $ref: '#/components/schemas/VersioniTraduzione'
+                  type: object
+                  properties:
+                    modificationDate:
+                      type: string
+                      example: 2023-05-20T11:51:24.708Z
+                    translations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          language:
+                            type: string
+                            example: en
+                          content:
+                            type: string
+                            example: hello
+                    defaultTranslationinLanguage:
+                      type: string
+                      example: hello
+                    defaultTranslationLanguage:
+                      type: string
+                      example: en
+                    keySort:
+                      type: string
+                      example: homeScreenGreeting
+                    published:
+                      type: boolean
+                      example: false
+                    creationDate:
+                      type: string
+                      example: 2023-05-20T11:51:24.708Z
+                    modifiedbyUser:
+                      type: string
+                      example: test1
+                    versionedTranslations:
+                      items:
+                        $ref: '#/components/schemas/Version'
           '400':
             description: bad input parameter
           '404':
-            description: object not found
+            description: not found
+
     put:
       tags:
           - admin
@@ -126,18 +164,80 @@ paths:
       responses:
         '201':
           description: item created
+          content:
+            application/json:
+                schema:
+                  type: object
+                  properties:
+                    newTranslation:
+                      type: object
+                      properties:
+                        tenantId:
+                          type: string
+                          example: tenant1
+                        keySort:
+                          type: string
+                          example: trad1
+                        defaultTranslationinLanguage:
+                          type: string
+                          example: hello
+                        defaultTranslationLanguage:
+                          type: string
+                          example: en
+                        modifiedbyUser:
+                          type: string
+                          example: test1
+                        translations:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              language:
+                                type: string
+                                example: en
+                              content:
+                                type: string
+                                example: hello
+                        creationDate:
+                          type: string
+                          example: 2023-05-20T11:51:24.708Z
+                        modificationDate:
+                          type: string
+                          example: 2023-05-20T11:51:24.708Z
+                        published:
+                          type: boolean
+                          example: false
+                        versionedTranslations:
+                          items:
+                            $ref: '#/components/schemas/Version'
         '400':
           description: 'invalid input, object invalid'
       requestBody: #######DA FARE
         content:
           application/json:
             schema:
-              items:
-                type: object
-                allOf:
-                  - $ref: '#/components/schemas/Traduzione'
-                  - $ref: '#/components/schemas/OggettoTraduzione'
-            
+              type: object
+              properties:
+                defaultTranslationinLanguage:
+                  type: string
+                  example: hello
+                defaultTranslationLanguage:
+                  type: string
+                  example: en
+                modifiedbyUser:
+                  type: string
+                  example: test1
+                translations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      language:
+                        type: string
+                        example: en
+                      content:
+                        type: string
+                        example: hello
         description: Inventory item to add
     
     delete:
@@ -163,9 +263,9 @@ paths:
               type: string
       responses:
         '200':
-          description: (OK)item deleted
+          description: OK
         '404':
-          description: object not found
+          description: not found
         
   /{tenantId}: ##DEFINITIVO
     get:
@@ -190,11 +290,31 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  anyOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
-                    - $ref: '#/components/schemas/TenantInfoGenerali'
-                    - $ref: '#/components/schemas/TenantInfoSensibili'
+                type: object
+                properties:
+                  tenantName:
+                    type: string
+                    example: tenant1
+                  numberTranslationAvailable:
+                    type: integer
+                    example: 1000
+                  numberTranslationUsed:
+                    type: integer
+                    example: 0
+                  defaultTranslationLanguage:
+                    type: string
+                    example: it
+                  listAvailableLanguages:
+                    type: array
+                    items:
+                      type: string
+                    example: ["it","en"]
+                  token:
+                    type: string
+                  userList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
         '400':
           description: bad input parameter
         '404':
@@ -217,34 +337,73 @@ paths:
             type: string
       responses:
         '201':
-          description: Item created
+          description: created
           content:
             application/json:
               schema:
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/TenantInfoGenerali'
-                    - $ref: '#/components/schemas/TenantInfoSensibili'
-                    
+                type: object
+                properties:
+                  tenantName:
+                    type: string
+                    example: tenant1
+                  numberTranslationAvailable:
+                    type: integer
+                    example: 1000
+                  numberTranslationUsed:
+                    type: integer
+                    example: 0
+                  defaultTranslationLanguage:
+                    type: string
+                    example: it
+                  listAvailableLanguages:
+                    type: array
+                    items:
+                      type: string
+                    example: ["it","en"]
+                  token:
+                    type: string
+                  userList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
         '200':
-          description: Item modified
+          description: OK
           content:
             application/json:
               schema:
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/TenantInfoGenerali'
+                type: object
+                properties:
+                  tenantName:
+                    type: string
+                    example: tenant1
+                  numberTranslationAvailable:
+                    type: integer
+                    example: 1000
+                  numberTranslationUsed:
+                    type: integer
+                    example: 0
+                  defaultTranslationLanguage:
+                    type: string
+                    example: it
+                  listAvailableLanguages:
+                    type: array
+                    items:
+                      type: string
+                    example: ["it","en"]
+                  token:
+                    type: string
+                  userList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
         '400':
           description: 'Bad Request: invalid input, object invalid'
       requestBody: 
         content:
           application/json:
             schema:
-                items:
-                  allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
-                    - $ref: '#/components/schemas/TenantInfoGenerali'
-                    
-                    
+              allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
+                - $ref: '#/components/schemas/TenantInfoGenerali'
         description: Inventory item to add
         ## CHIEDERE SE FARE UNO SCHEMA SOLO PER LA PUT (SENZA INVIARE CAMPI VUOTI)
         
@@ -263,9 +422,9 @@ paths:
             type: string
       responses:
           '200':
-            description: item deleted
+            description: OK
           '404':
-            description: object not found
+            description: not found
 
   /{tenantId}/invite: ## invito traduttori nel tenant > cognito
     post:
@@ -281,57 +440,31 @@ paths:
           description: nome del tenant
           required: true
           schema:
-            type: string
+            type: object
+            properties:
+              userEmail:
+                type: string
+                example: test1@gmail.com
+              username:
+                type: string
+                example: test1
+              name:
+                type: string
+                example: Mario
+              lastName:
+                type: string
+                example: Rossi
       responses:
-        '201':
-          description: utente invitato
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
+                  - $ref: '#/components/schemas/User'
         '400':
-          description: bad request
-        
-        
-  /{tenantId}/user: ##crea un utente, possibile chiamata in cascata dopo la creazione del tenant eseguito solo dal supertenant
-  ## CREAZIONE UTENTE ADMIN?????
-    post:
-      tags: 
-        - superadmin
-      summary: creazione utente, possibile chiamata in cascata dopo la creazione del tenant 
-      operationId: createUser
-      description: creazione utente, possibile chiamata in cascata dopo la creazione del tenant
-      parameters:
-        - in: path
-          name: tenantId
-          description: nome del tenant
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: utente creato
-        '400':
-          description: bad request      
-            
-    delete:
-      tags:
-        - admin
-        - superadmin
-      summary: eliminazione utente
-      operationId: deleteUser
-      description: eliminazione utente
-      parameters:
-        - in: path
-          name: tenantId
-          description: nome del tenant
-          required: true
-          schema:
-            type: string
-      responses:
-          '200':
-            description: (OK)item deleted
-          '404':
-            description: object not found 
-  
-    
-        
+          description: bad request  
+
   /tenants:  ## lista di tutti i tenant visibili al super admin
     get:
       tags:
@@ -352,10 +485,21 @@ paths:
                     type: array
                     items:
                       type: object
-                      allOf:
-                        - $ref: '#/components/schemas/TenantInfoGenerali'
+                      properties:
+                        tenantName:
+                          type: string
+                          example: tenant1
+                        numberTranslationAvailable:
+                          type: integer
+                          example: 1000
+                        numberTranslationUsed:
+                          type: integer
+                          example: 0
+                        defaultTranslationLanguage:
+                          type: string
+                          example: it
         '404':
-          description: Tenat non trovati
+          description: not found
       
    
           
@@ -486,5 +630,8 @@ components:
           type: string
         creationDate:
           type: string
-    
+        name:
+          type: string
+        lastName:
+          type: string
     
