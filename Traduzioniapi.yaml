@@ -17,22 +17,7 @@ tags:
     description: operazioni che possono essere eseguite dai traduttori
     
 ########################################################################################################
-paths:
-  /login:
-    get: #######DA FARE
-      tags:
-        - admin
-        - superadmin
-        - traduttori
-      summary: login
-      operationId: login
-      description: login
-      responses:
-        '200':
-          description: login autorizzato
-        '400':
-          description: login NON autorizzato
-        
+paths:  
   /{tenantId}/translations:
     get:
         tags:
