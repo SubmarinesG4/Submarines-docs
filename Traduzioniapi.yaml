@@ -35,6 +35,21 @@ paths:
             required: true
             schema:
               type: string
+          - in: query
+            name: word
+            schema:
+              type: string
+            description: filtraggio per parola
+          - in: query
+            name: date
+            schema:
+              type: string
+            description: filtraggio per data 
+          - in: query
+            name: published
+            schema:
+              type: boolean
+            description: filtraggio per pubblicazione 
         responses:
           '200':
             description: si ottiene una lista di traduzioni in particolare chiavetraduzione traduzionedefault
