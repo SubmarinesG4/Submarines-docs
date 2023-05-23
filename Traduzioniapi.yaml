@@ -122,7 +122,7 @@ paths:
                     defaultTranslationLanguage:
                       type: string
                       example: en
-                    keySort:
+                    translationKey:
                       type: string
                       example: homeScreenGreeting
                     published:
@@ -176,10 +176,7 @@ paths:
                     newTranslation:
                       type: object
                       properties:
-                        tenantId:
-                          type: string
-                          example: tenant1
-                        keySort:
+                        translationKey:
                           type: string
                           example: trad1
                         defaultTranslationinLanguage:
