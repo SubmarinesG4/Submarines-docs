@@ -227,9 +227,9 @@ paths:
                 defaultTranslationLanguage:
                   type: string
                   example: en
-                modifiedbyUser:
-                  type: string
-                  example: test1
+                published:
+                  type: boolean
+                  example: true
                 translations:
                   type: array
                   items:
