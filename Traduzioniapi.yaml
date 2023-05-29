@@ -332,9 +332,9 @@ paths:
     put: ##creazione/modifica tenant
       tags:
         - superadmin
-      summary: creazione e/o modifica di un tenant
+      summary: creazione di un tenant
       operationId: createTenant
-      description: creazione e/o modifica di un tenant
+      description: creazione di un tenant
       parameters:
         - in: path
           name: tenantId
@@ -411,8 +411,19 @@ paths:
         content:
           application/json:
             schema:
-              allOf: ## utente deve vedere solo alcune cose... non i dettagli di altri utenti
-                - $ref: '#/components/schemas/TenantInfoGenerali'
+              type: object
+              properties:
+                numberTranslationAvailable:
+                  type: integer
+                  example: 1000
+                defaultTranslationLanguage:
+                  type: string
+                  example: it
+                listAvailableLanguages:
+                  type: array
+                  items:
+                    type: string
+                  example: ["it","en"]
         description: Inventory item to add
         ## CHIEDERE SE FARE UNO SCHEMA SOLO PER LA PUT (SENZA INVIARE CAMPI VUOTI)
         
@@ -436,6 +447,71 @@ paths:
             description: not found
           '500':
             description: internal server error
+    
+    patch:
+      tags:
+        - superadmin
+      summary: modifica di un tenant
+      operationId: updateTenant
+      description: modifica di un tenant
+      parameters:
+        - in: path
+          name: tenantId
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tenantName:
+                    type: string
+                    example: tenant1
+                  numberTranslationAvailable:
+                    type: integer
+                    example: 1000
+                  numberTranslationUsed:
+                    type: integer
+                    example: 0
+                  defaultTranslationLanguage:
+                    type: string
+                    example: it
+                  listAvailableLanguages:
+                    type: array
+                    items:
+                      type: string
+                    example: ["it","en"]
+                  token:
+                    type: string
+                  userList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          description: 'Bad Request'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numberTranslationAvailable:
+                  type: integer
+                  example: 1000
+                defaultTranslationLanguage:
+                  type: string
+                  example: it
+                listAvailableLanguages:
+                  type: array
+                  items:
+                    type: string
+                  example: ["it","en"]
+
 
   /{tenantId}/invite: ## invito traduttori nel tenant > cognito
     post:
