@@ -15,6 +15,8 @@ tags:
     description: operazioni che possono essere eseguite dagli admin del tenant
   - name: traduttori
     description: operazioni che possono essere eseguite dai traduttori
+  - name: libreria
+    description: operazioni che vengono eseguite dalla libreria
     
 ########################################################################################################
 paths:  
@@ -597,10 +599,121 @@ paths:
         '500':
           description: internal server error
 
+  /{tenantId}/user:
+    delete:
+      tags:
+        - admin
+        - superadmin
+      summary: eliminare un utente dal tenant
+      operationId: deleteUser
+      description: eliminare un utente dal tenant
+      parameters:
+        - in: path
+          name: tenantId
+          description: nome del tenant
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: email@email.com
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: not found
+        '500':
+          description: internal server error
+
+  /translations/{language}/{token}:
+    get:
+      tags:
+        - libreria
+      summary: ritorna la lista delle traduzioni in un determinato tenant
+      operationId: getTranslationByToken
+      description: ottenere la lista delle traduzioni in un determinato tenant
+      parameters:
+        - in: path
+          name: language
+          description: lingua in cui si vuole ottenere la traduzione
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: token
+          description: token del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: si ottengono le trauzioni in una determinata lingua di un determinato tenant (mappa chiaveTraduzione-traduzione)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  translations:
+                    type: object
+                    properties:
+                      homeScreenGreeting:
+                        type: string
+                        example: hello world
+        '400':
+          description: bad input parameter
+        '404':
+          description: not found
+        '500':
+          description: internal server error
+
+  /translations/details/{token}:
+    get:
+      tags: 
+        - libreria
+      summary: ritorna la lista delle traduzioni in un determinato tenant e la lingua di default
+      operationId: getTenantInfo
+      description: ottenere la lista delle traduzioni in un determinato tenant e la lingua di default
+      parameters:
+        - in: path
+          name: token
+          description: token del tenant
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: si ottiene la lista delle lingue e la traduzione di default
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  defaultTranslationLanguage:
+                    type: string
+                    example: it
+                  listAvailableLanguages:
+                    type: array
+                    items:
+                      type: string
+                    example: ["it","en"]
+        '400':
+          description: bad input parameter
+        '403':
+          description: forbidden
+        '500':
+          description: internal server error
+
+
 ################################################################################################
 components:
   schemas:
-    
+
     # oggetto traduzione (es: en:hi, it:ciao)
     OggettoTraduzione:
       type: object
