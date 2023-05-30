@@ -65,9 +65,9 @@ paths:
                       items:
                         $ref: '#/components/schemas/Traduzione'
           '400':
-            description: bad input parameter
-          '404':
-            description: not found
+            description: Bad Request
+          '403':
+            description: User has not got the required role for this action
           '500':
             description: internal server error
             
@@ -139,8 +139,8 @@ paths:
                     versionedTranslations:
                       items:
                         $ref: '#/components/schemas/Version'
-          '400':
-            description: bad input parameter
+          '403':
+            description: User has not got the required role for this action
           '404':
             description: not found
           '500':
@@ -213,8 +213,55 @@ paths:
                         versionedTranslations:
                           items:
                             $ref: '#/components/schemas/Version'
+        '200':
+          description: item modified
+          content:
+            application/json:
+                schema:
+                  type: object
+                  properties:
+                    newTranslation:
+                      type: object
+                      properties:
+                        translationKey:
+                          type: string
+                          example: trad1
+                        defaultTranslationinLanguage:
+                          type: string
+                          example: hello
+                        defaultTranslationLanguage:
+                          type: string
+                          example: en
+                        modifiedbyUser:
+                          type: string
+                          example: test1
+                        translations:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              language:
+                                type: string
+                                example: en
+                              content:
+                                type: string
+                                example: hello
+                        creationDate:
+                          type: string
+                          example: 2023-05-20T11:51:24.708Z
+                        modificationDate:
+                          type: string
+                          example: 2023-05-20T11:51:24.708Z
+                        published:
+                          type: boolean
+                          example: false
+                        versionedTranslations:
+                          items:
+                            $ref: '#/components/schemas/Version'
         '400':
           description: 'invalid input, object invalid'
+        '403':
+            description: User has not got the required role for this action
         '500':
           description: internal server error
       requestBody: #######DA FARE
@@ -269,6 +316,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+            description: User has not got the required role for this action
         '404':
           description: not found
         '500':
@@ -322,8 +371,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/User'
-        '400':
-          description: bad input parameter
+        '403':
+          description: User has not got the required role for this action
         '404':
           description: object not found
         '500':
@@ -371,36 +420,7 @@ paths:
                     example: ["it","en"]
                   token:
                     type: string
-                  userList:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  tenantName:
-                    type: string
-                    example: tenant1
-                  numberTranslationAvailable:
-                    type: integer
-                    example: 1000
-                  numberTranslationUsed:
-                    type: integer
-                    example: 0
-                  defaultTranslationLanguage:
-                    type: string
-                    example: it
-                  listAvailableLanguages:
-                    type: array
-                    items:
-                      type: string
-                    example: ["it","en"]
-                  token:
-                    type: string
+                    example: a9477290-9047-5d96-b11c-1f82994f0aa2
                   userList:
                     type: array
                     items:
@@ -490,12 +510,16 @@ paths:
                     example: ["it","en"]
                   token:
                     type: string
-                  userList:
+                  users:
                     type: array
                     items:
                       $ref: '#/components/schemas/User'
         '400':
           description: 'Bad Request'
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
       requestBody:
         content:
           application/json:
@@ -548,6 +572,9 @@ paths:
                 lastName:
                   type: string
                   example: Rossi
+                role:
+                  type: string
+                  example: admin
       responses:
         '200':
           description: OK
@@ -558,6 +585,8 @@ paths:
                   - $ref: '#/components/schemas/User'
         '400':
           description: bad request  
+        '403':
+          description: User has not got the required role for this action
         '500':
           description: internal server error
 
@@ -594,8 +623,6 @@ paths:
                         defaultTranslationLanguage:
                           type: string
                           example: it
-        '404':
-          description: not found
         '500':
           description: internal server error
 
@@ -626,6 +653,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: User has not got the required role for this action
         '404':
           description: not found
         '500':
@@ -677,7 +706,7 @@ paths:
       tags: 
         - libreria
       summary: ritorna la lista delle traduzioni in un determinato tenant e la lingua di default
-      operationId: getTenantInfo
+      operationId: getTranslationLibrary
       description: ottenere la lista delle traduzioni in un determinato tenant e la lingua di default
       parameters:
         - in: path
@@ -704,10 +733,10 @@ paths:
                     example: ["it","en"]
         '400':
           description: bad input parameter
-        '403':
-          description: forbidden
+        '404':
+          description: Not found
         '500':
-          description: internal server error
+          description: Internal server error
 
 
 ################################################################################################
@@ -720,7 +749,6 @@ components:
       required: 
         - traduzione
       properties:
-      # contiene tutte le lingue del tenant anche quelle che non hanno una traduzione
         translations:
           type: array
           items:
@@ -818,27 +846,27 @@ components:
           example: ["it","en"]
         
     
-    TenantInfoSensibili:
-      type: object
-      properties:
-        token:
-          type: string
-        userList:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
+    
     
     User:
       type: object
       properties:
         userEmail:
           type: string
+          example: utente1@gmail.com
         username:
           type: string
+          example: utente1@gmail.com
         creationDate:
           type: string
+          example: data
         name:
           type: string
+          example: utente1
         lastName:
           type: string
+          example: utente1
+        role:
+          type: string
+          example: admin
     
