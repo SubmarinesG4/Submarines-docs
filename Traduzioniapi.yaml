@@ -17,7 +17,7 @@ tags:
     description: operazioni che possono essere eseguite dai traduttori
   - name: libreria
     description: operazioni che vengono eseguite dalla libreria
-    
+
 ########################################################################################################
 paths:  
   /{tenantId}/translations:
@@ -70,9 +70,7 @@ paths:
             description: User has not got the required role for this action
           '500':
             description: internal server error
-            
-            
-            
+
   /{tenantId}/translation/{TranslationKey}:
     get:
         tags:
@@ -291,7 +289,7 @@ paths:
                         type: string
                         example: hello
         description: Inventory item to add
-    
+
     delete:
       tags:
         - admin
@@ -322,7 +320,7 @@ paths:
           description: not found
         '500':
           description: internal server error
-        
+
   /{tenantId}: ##DEFINITIVO
     get:
       tags:
@@ -377,9 +375,7 @@ paths:
           description: object not found
         '500':
           description: internal server error
-    
-    
-      
+
     put: ##creazione/modifica tenant
       tags:
         - superadmin
@@ -447,8 +443,7 @@ paths:
                     type: string
                   example: ["it","en"]
         description: Inventory item to add
-        ## CHIEDERE SE FARE UNO SCHEMA SOLO PER LA PUT (SENZA INVIARE CAMPI VUOTI)
-        
+
     delete:
       tags:
         - superadmin
@@ -537,7 +532,6 @@ paths:
                   items:
                     type: string
                   example: ["it","en"]
-
 
   /{tenantId}/invite: ## invito traduttori nel tenant > cognito
     post:
@@ -742,42 +736,6 @@ paths:
 ################################################################################################
 components:
   schemas:
-
-    # oggetto traduzione (es: en:hi, it:ciao)
-    OggettoTraduzione:
-      type: object
-      required: 
-        - traduzione
-      properties:
-        translations:
-          type: array
-          items:
-            type: object
-            properties:
-              language:
-                type: string
-                example: it
-              content:
-                type: string
-                example: ciao
-          example:
-            - {"language":it, "content":ciao}
-            - {"language":en, "content":hi}
-            - {"language":fr, "content":}
-        modifiedbyUser:
-          type: string
-          example: utente1
-        creationDate:
-          type: string
-          example: 2023-05-02
-        modificationDate:
-          type: string
-          example: 2023-06-02
-        published:
-          type: boolean
-          example: false
-          
-        
     ## traduzione che viene visualizzata nella schermata generale(lista di traduzioni)
     Traduzione:
       type: object
@@ -794,14 +752,6 @@ components:
         defaultTranslationinLanguage:
           type: string
           example: ciao
-
-    VersioniTraduzione:
-      type: object
-      properties:
-        versionedTranslations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Version'
 
     Version:
       type: object
@@ -826,28 +776,7 @@ components:
           example:
             - {"language":it, "content":ciaoo}
             - {"language":en, "content":hello}
-    
-    TenantInfoGenerali:
-      type: object
-      properties:
-        tenantName:
-          type: string
-          example: tenant1
-        numberTranslationAvailable:
-          type: integer
-          minimum: 0
-        defaultTranslationLanguage:
-          type: string
-          example: it
-        listAvailableLanguages:
-          type: array
-          items:
-            type: string
-          example: ["it","en"]
-        
-    
-    
-    
+
     User:
       type: object
       properties:
@@ -869,4 +798,3 @@ components:
         role:
           type: string
           example: admin
-    
